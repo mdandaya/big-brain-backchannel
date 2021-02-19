@@ -10,7 +10,13 @@ var cookieParser = require('cookie-parser');
 var messageRouter = require('./routes/message-router');
 
 // import development config file
-const config = require('./config');
+try {
+  const config = require('./config');
+} catch (ex) {
+  console.log('no config file');
+}
+
+/////////////////////////////////////////////////////////
 
 // Initialize express app
 var app = express();

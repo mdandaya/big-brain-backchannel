@@ -1,6 +1,11 @@
 const { Pool } = require('pg');
 
-const config = require('../config');
+// import development config file
+try {
+  const config = require('./config');
+} catch (ex) {
+  console.log('no config file');
+}
 
 const {
   db: { host, database, user, port, password },
