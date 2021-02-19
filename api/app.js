@@ -1,4 +1,4 @@
-// import module dependencies
+// Import module dependencies
 var express = require('express');
 var path = require('path');
 var session = require('express-session');
@@ -6,22 +6,21 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var cookieParser = require('cookie-parser');
 
-// import routes
+// Import routes
 var messageRouter = require('./routes/message-router');
 
-// import development config file
+// Import development config file
+var config = null;
 try {
-  const config = require('./config');
+  config = require('./config');
 } catch (ex) {
-  console.log('no config file');
+  console.log('no config file app.js');
 }
-
-/////////////////////////////////////////////////////////
 
 // Initialize express app
 var app = express();
 
-// Cors
+// CORS
 app.use(cors());
 
 // Body parser middleware

@@ -1,30 +1,26 @@
 const { Pool } = require('pg');
 
+// import development config file
+var config = null;
 try {
-  const config = require('./config');
-  const {
+  config = require('../config');
+  var {
     db: { host, database, user, port, password },
   } = config;
-
-  const pool = new Pool({
-    host: host,
-    database: database,
-    user: user,
-    port: port,
-    password: password,
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-  module.exports = pool;
 } catch (ex) {
-  console.log('no config file');
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-  module.exports = pool;
+  console.log('no config file database.js');
 }
+
+const pool = new Pool({
+  host: host,
+  database: database,
+  user: user,
+  port: port,
+  password: password,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+module.exports = pool;
