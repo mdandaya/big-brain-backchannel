@@ -10,7 +10,7 @@
     "start": "npm run api",
     "dev": "concurrently \"npm run api-dev\" \"npm run client\"",
     "api-dev": "npm run dev --prefix api",
-    "heroku-postbuild": "cd client && npm install && npm run build && cd .."
+    "heroku-postbuild": "cd client && npm install && npm run build && cd ../api && npm install && .."
   },
   "author": "MDandaya",
   "license": "ISC",
