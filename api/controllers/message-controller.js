@@ -13,7 +13,7 @@ exports.addMessage = (req, res, next) => {
 
   var message = {
     text: req.body.text,
-    userId: req.body.userID,
+    userID: req.body.userID,
   };
 
   messageModel

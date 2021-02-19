@@ -21,7 +21,7 @@ class Message extends React.Component {
     var date = new Date(this.props.datetime);
     var hours = date.getHours();
     var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
+    var ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12; // the hour '0' should be '12'
     minutes = minutes < 10 ? '0' + minutes : minutes;
@@ -42,8 +42,8 @@ class Message extends React.Component {
     return (
       <div>
         <br />
-        <p>{this.props.userID}</p>
-        <p>{this.formatDate()}</p>
+        <span>{this.props.userID + ' - '}</span>
+        <span>{this.formatDate()}</span>
         <p>{this.props.text}</p>
         <form onSubmit={this.handleDelete} method="POST">
           <button>Delete</button>
@@ -59,7 +59,7 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       loaded: false,
-      userID: 'test',
+      userID: '',
       messageList: '',
       text: '',
     };
@@ -108,6 +108,10 @@ export default class App extends React.Component {
     event.preventDefault();
 
     if (this.state.text.trim().length === 0) return;
+    if (this.state.userID.trim().length === 0) {
+      alert('please enter a valid name');
+      return;
+    }
 
     const requestOptions = {
       method: 'POST',
@@ -139,11 +143,19 @@ export default class App extends React.Component {
         <form onSubmit={this.handleSubmit}>
           <input
             type="text"
+            name="userID"
+            placeholder="Your name"
+            onChange={this.handleChange}
+            // value={this.state.userID}
+          />
+          <input
+            type="text"
             name="text"
             placeholder="Your message"
             onChange={this.handleChange}
             value={this.state.text}
           />
+          <input type="submit" hidden />
         </form>
       </div>
     );
