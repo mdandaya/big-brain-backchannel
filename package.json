@@ -14,7 +14,7 @@
   },
   "author": "MDandaya",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "concurrently": "^5.3.0"
   }
 }
