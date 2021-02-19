@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import socketIOClient from 'socket.io-client';
 
 class Message extends React.Component {
   constructor(props) {
@@ -54,6 +55,14 @@ class Message extends React.Component {
   }
 }
 
+var socket = socketIOClient();
+
+function subscribeToTimer(cb) {
+  socket.on('FromAPI', (data) => {
+    cb(null, data);
+  });
+}
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -62,10 +71,17 @@ export default class App extends React.Component {
       userID: '',
       messageList: '',
       text: '',
+      time: '',
     };
   }
 
   componentDidMount() {
+    subscribeToTimer((err, timestamp) => {
+      this.setState({
+        time: timestamp,
+      });
+      this.update();
+    });
     this.update();
     this.scrollToBottom();
   }
@@ -125,9 +141,11 @@ export default class App extends React.Component {
   };
 
   render() {
-    console.log(this.state);
     return (
       <div>
+        <p>
+          It's <time dateTime={this.state.time}>{this.state.time}</time>
+        </p>
         <div className="chatBox" style={{ height: '75vh', overflow: 'scroll' }}>
           {this.state.loaded ? (
             this.renderMessages(this.state.messageList, this.update)
