@@ -14,9 +14,7 @@ class Message extends React.Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(this.props),
     };
-    fetch('http://localhost:5000/messages/delete', requestOptions).then(() =>
-      this.props.update()
-    );
+    fetch('/messages/delete', requestOptions).then(() => this.props.update());
   };
 
   formatDate() {
@@ -77,7 +75,7 @@ export default class App extends React.Component {
   }
 
   update = () => {
-    fetch('http://localhost:5000/messages')
+    fetch('/messages')
       .then((res) => res.text())
       .then((data) => this.setState({ messageList: data, loaded: true }));
   };
@@ -117,7 +115,7 @@ export default class App extends React.Component {
       body: JSON.stringify(this.state),
     };
 
-    fetch('http://localhost:5000/messages/add', requestOptions)
+    fetch('/messages/add', requestOptions)
       .then(() => this.update())
       .then(() => this.setState({ text: '' }));
   };

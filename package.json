@@ -6,10 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "api": "npm start --prefix api",
-    "api-dev": "npm run dev --prefix api",
     "client": "npm start --prefix client",
-    "start": "concurrently \"npm run api\" \"npm run client\"",
-    "dev": "concurrently \"npm run api-dev\" \"npm run client\""
+    "start": "npm run api",
+    "dev": "concurrently \"npm run api-dev\" \"npm run client\"",
+    "api-dev": "npm run dev --prefix api",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "author": "MDandaya",
   "license": "ISC",
