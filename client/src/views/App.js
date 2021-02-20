@@ -1,67 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import socketIOClient from 'socket.io-client';
+import Message from './Messages';
 
-class Message extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
-  handleDelete = (event) => {
-    event.preventDefault();
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(this.props),
-    };
-    fetch('/messages/delete', requestOptions).then(() => this.props.update());
-  };
-
-  formatDate() {
-    var date = new Date(this.props.datetime);
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return (
-      date.getMonth() +
-      1 +
-      '/' +
-      date.getDate() +
-      '/' +
-      date.getFullYear() +
-      '  ' +
-      strTime
-    );
-  }
-
-  render() {
-    return (
-      <div>
-        <br />
-        <span>{this.props.userID + ' - '}</span>
-        <span>{this.formatDate()}</span>
-        <p>{this.props.text}</p>
-        <form onSubmit={this.handleDelete} method="POST">
-          <button>Delete</button>
-        </form>
-        <br />
-      </div>
-    );
-  }
-}
-
-var socket = socketIOClient();
-
-function subscribeToTimer(cb) {
-  socket.on('FromAPI', (data) => {
-    cb(null, data);
+var socket;
+var subscribeToUpdate = (cb) => {
+  socket.on('Update', () => {
+    cb(null);
   });
-}
+};
 
 export default class App extends React.Component {
   constructor(props) {
@@ -71,15 +17,13 @@ export default class App extends React.Component {
       userID: '',
       messageList: '',
       text: '',
-      time: '',
     };
   }
 
   componentDidMount() {
-    subscribeToTimer((err, timestamp) => {
-      this.setState({
-        time: timestamp,
-      });
+    socket = socketIOClient();
+    console.log('App componentDidMount()');
+    subscribeToUpdate((err) => {
       this.update();
     });
     this.update();
@@ -91,7 +35,7 @@ export default class App extends React.Component {
   }
 
   update = () => {
-    fetch('/messages')
+    fetch('/api/messages')
       .then((res) => res.text())
       .then((data) => this.setState({ messageList: data, loaded: true }));
   };
@@ -102,21 +46,6 @@ export default class App extends React.Component {
 
   handleChange = (event) => {
     this.setState({ [event.target.name]: event.target.value });
-  };
-
-  renderMessages = (messageList, update) => {
-    const messages = JSON.parse(messageList);
-    const list = messages.map((data) => (
-      <Message
-        key={data.message_id}
-        id={data.message_id}
-        userID={data.message_user_id}
-        datetime={data.message_datetime}
-        text={data.message_text}
-        update={update}
-      />
-    ));
-    return list;
   };
 
   handleSubmit = (event) => {
@@ -135,17 +64,29 @@ export default class App extends React.Component {
       body: JSON.stringify(this.state),
     };
 
-    fetch('/messages/add', requestOptions)
+    fetch('/api/messages/add', requestOptions)
       .then(() => this.update())
       .then(() => this.setState({ text: '' }));
+  };
+
+  renderMessages = (messageList, update) => {
+    const messages = JSON.parse(messageList);
+    const list = messages.map((data) => (
+      <Message
+        key={data.message_id}
+        id={data.message_id}
+        userID={data.message_user_id}
+        datetime={data.message_datetime}
+        text={data.message_text}
+        update={update}
+      />
+    ));
+    return list;
   };
 
   render() {
     return (
       <div>
-        <p>
-          It's <time dateTime={this.state.time}>{this.state.time}</time>
-        </p>
         <div className="chatBox" style={{ height: '75vh', overflow: 'scroll' }}>
           {this.state.loaded ? (
             this.renderMessages(this.state.messageList, this.update)

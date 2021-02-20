@@ -16,9 +16,10 @@ exports.addMessage = (req, res, next) => {
     userID: req.body.userID,
   };
 
-  messageModel
-    .addMessage(message)
-    .then(() => res.status(200).send({ message: 'addMessage() success' }));
+  messageModel.addMessage(message).then(() => {
+    req.io.emit('Update');
+    res.status(200).send({ res: 'addMessage() success' });
+  });
 };
 
 exports.deleteMessage = (req, res, next) => {
@@ -26,7 +27,8 @@ exports.deleteMessage = (req, res, next) => {
 
   var id = req.body.id;
 
-  messageModel
-    .deleteMessage(id)
-    .then(() => res.status(200).send({ message: 'addMessage() success' }));
+  messageModel.deleteMessage(id).then(() => {
+    req.io.emit('Update');
+    res.status(200).send({ res: 'addMessage() success' });
+  });
 };
