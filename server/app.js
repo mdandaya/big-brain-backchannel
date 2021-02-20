@@ -22,37 +22,6 @@ try {
 // Initialize express app
 var app = express();
 
-// CORS
-app.use(cors());
-
-// Body parser middleware
-app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
-app.use(bodyParser.json()); // parse application/json
-
-// Cookie parser Middleware
-app.use(cookieParser());
-
-// Routing
-app.use('/messages', messageRouter);
-
-// User session
-app.use(
-  session({
-    secret: 'secret token',
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/build')));
-
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '../client/build/index.html'));
-});
-
 // Create server
 var server = http.createServer(app);
 
@@ -62,6 +31,43 @@ var io = socketIO(server, {
     methods: ['GET', 'POST'],
   },
 });
+
+// place this middleware before any other route definitions
+// makes io available as req.io in all request handlers
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+// CORS
+app.use(cors());
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: false })); // parse application/x-www-form-urlencoded
+app.use(bodyParser.json()); // parse application/json
+
+// Cookie parser Middleware
+app.use(cookieParser());
+// Routing
+app.use('/messages', messageRouter);
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '/../client/build')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../client/build/index.html'));
+});
+
+// User session
+app.use(
+  session({
+    secret: 'secret token',
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 let interval;
 
@@ -80,7 +86,7 @@ io.on('connection', (socket) => {
 const getApiAndEmit = (socket) => {
   const response = new Date();
   // Emitting a new message. Will be consumed by the client
-  io.sockets.emit('FromAPI', response);
+  io.emit('FromAPI', response);
 };
 var port = process.env.PORT || config.app.port;
 server.listen(port, () => console.log('Server ready on port ' + port));

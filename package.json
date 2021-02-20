@@ -8,8 +8,9 @@
     "server": "npm start --prefix server",
     "client": "npm start --prefix client",
     "start": "npm run server",
-    "dev": "concurrently \"npm run server-dev\" \"npm run client\"",
+    "dev": "npm run client-build && npm run server-dev",
     "server-dev": "npm run dev --prefix server",
+    "client-build": "cd client && npm run build",
     "heroku-postbuild": "cd server && npm install && cd ../client && npm install && npm run build"
   },
   "author": "MDandaya",
