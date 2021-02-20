@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "api": "npm start --prefix api",
+    "server": "npm start --prefix server",
     "client": "npm start --prefix client",
-    "start": "npm run api",
-    "dev": "concurrently \"npm run api-dev\" \"npm run client\"",
-    "api-dev": "npm run dev --prefix api",
-    "heroku-postbuild": "cd client && npm install && npm run build && cd ../api && npm install"
+    "start": "npm run server",
+    "dev": "concurrently \"npm run server-dev\" \"npm run client\"",
+    "server-dev": "npm run dev --prefix server",
+    "heroku-postbuild": "cd server && npm install && cd ../client && npm install && npm run build"
   },
   "author": "MDandaya",
   "license": "ISC",
