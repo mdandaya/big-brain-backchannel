@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './views/App';
+import MessageBoard from './views/MessageBoard';
 import {
   BrowserRouter as Router,
   Switch,
@@ -15,7 +15,7 @@ ReactDOM.render(
     <Router>
       <Switch>
         <Route path="/">
-          <App />
+          <MessageBoard />
         </Route>
       </Switch>
     </Router>
